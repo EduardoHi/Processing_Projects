@@ -1,0 +1,34 @@
+class Community {
+  float migrationRate = 0.001;
+  Specie[] species;
+  int comSize = 4;
+  Community(){
+    species = new Specie[comSize];
+      species[0] = new Specie(color(255,255,255) , new float[]{1,1,2,0.1} );
+      //species[1] = new Specie(color(255/3,255,255) , new float[]{1.5,0.1,2.3,0.2} );
+      //species[2] = new Specie(color(510/3,255,255) , new float[]{0.2,1.3,1.2,0.3} );
+  }
+  void run(){
+    for(Specie s: species){
+    s.run();
+    }
+  }
+  void display(){
+    for(Specie s: species)
+    s.display();
+  }
+  void nextGen(){
+      for(Specie s : species){
+      s.evaluate();
+      s.displayStats();
+      s.selection();
+      }
+      /*for(Specie s : species){
+        for(Rocket r : s.rockets){
+          if(random(0)<migrationRate){
+            
+          }
+        }
+      }*/
+  }
+}

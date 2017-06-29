@@ -1,0 +1,6 @@
+class DNA{
+  PVector genes;
+  for(int i=0; i<lifespan;i++){
+    
+  }
+}

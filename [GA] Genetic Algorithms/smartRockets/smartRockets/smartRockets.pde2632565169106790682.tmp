@@ -1,0 +1,122 @@
+//counters
+int gen = 0;
+int count = 0;
+
+//holders
+Community comm;
+ArrayList<Obstacle> obs;
+PVector target;
+
+//parameters
+int lifespan = 600;
+int speed = 15;
+
+//controls
+boolean pause = false;
+boolean drawG = true;
+float m1x,m2x; 
+float m1y,m2y;
+boolean allInactive = true;
+
+//stats
+float avgFit = 0;
+float bestFit = 0;
+int bestTime = 0;
+
+void setup(){
+  size(600,600);
+  reset();
+  obs = new ArrayList<Obstacle>();
+  target = new PVector(width/2,50);
+}
+void reset(){
+  colorMode(HSB);
+  comm = new Community();
+  count = 0;
+  gen = 0;
+}
+void draw(){
+  background(0);
+  fill(255);
+  ellipse(target.x,target.y,10,10);
+  for(Obstacle o : obs){
+    o.show();
+  }
+  if(speed<=0) pause = true;
+  if(!pause){
+    displayText();
+    for(int i=0;i<speed;i++){
+      comm.run();
+      count++;
+      allInactive = true;
+      for(Specie s : comm.species){
+        for(Rocket r : s.rockets){
+          if(!(r.crashed||r.completed)){
+          allInactive = false;
+          }
+        }
+      }   
+      
+      if(count==lifespan||allInactive){
+        comm.nextGen();
+        count = 0;
+        gen++;
+      }
+      i++;
+      }
+  } else {
+    displayText();
+    comm.display();
+  }
+}
+
+void displayText(){
+  text("gen: "+gen,30,30);
+  text("speed: "+speed,30,40);
+  text("count: "+count,30,50);
+  text("avg fit: "+(avgFit*1000),width-140,height-20);
+  text("best time: "+(bestTime),width-140,height-30);
+}
+
+void mouseReleased(){
+  m2x = mouseX;
+  m2y = mouseY;
+  int dx = (int)(m2x-m1x);
+  int dy = (int)(m2y-m1y);
+  if(dx>=10&&dy>=10)
+  obs.add(new Obstacle(m1x,m1y,dx,dy));
+}
+void mousePressed(){
+  for(Obstacle o : obs){
+    if(!o.checkCollision(mouseX,mouseY))
+      m1x = mouseX;
+      m1y = mouseY;
+  }
+}
+void mouseClicked(){
+  if(mouseButton==RIGHT){
+    for(int i=0;i<obs.size();i++){
+    if(obs.get(i).checkCollision(mouseX,mouseY))
+    obs.remove(i);
+  }
+  }
+}
+void keyPressed(){
+  if(key=='r'){
+    reset();
+  }
+  if(key=='p'){
+    pause = !pause;
+  }
+  if(key=='+'){
+    if(speed<30)
+    speed++;
+  }
+  if(key=='-'){
+    if(speed>=1)
+    speed--;
+  }
+  if(key=='g'){
+    drawG = !drawG;
+  }
+}

@@ -1,0 +1,97 @@
+class Rocket{
+  PVector pos = new PVector(width/2,height);
+  PVector vel = new PVector(0,0);
+  PVector acc = new PVector(0,0);
+  DNA dna;
+  float fitness = 0;
+  boolean completed = false;
+  int timer = 0;
+  boolean crashed = false;
+  color c;
+  float totalDists;
+  int size = 8;
+  
+  Rocket(){
+    dna = new DNA();
+    int r1 = (int)random(255);
+    int r2 = (int)random(255);
+    int r3 = (int)random(255);
+    c = color(r1,r2,r3,200);
+  }
+  Rocket(DNA dna,color c){
+    this.dna = dna;
+    this.c = c;
+  }
+  void applyForce(PVector force){
+    acc.add(force);
+  }
+
+  void update(){
+    float d = dist(pos.x,pos.y,target.x,target.y);
+    if(d<10){
+      completed = true;
+    }
+    for(Obstacle o: obs){
+      if(o.checkCollision(pos.x,pos.y))
+        crashed = true;
+    }
+    
+    if(pos.x<=0||pos.x>=width||pos.y<=0||pos.y>=height+10){
+      crashed = true;
+    }
+    
+    if(!completed&&!crashed){
+    applyForce(dna.genes[count]);
+    vel.add(acc);
+    pos.add(vel);
+    acc.mult(0);
+    timer++;
+    }
+  }
+
+  void display(){
+    /*pushMatrix();
+    translate(pos.x,pos.y);
+    rotate(vel.heading());
+    rectMode(CENTER);
+    stroke(255);
+    colorMode(HSB);
+    fill(c);
+    rect(0,0 , 30,10);
+    popMatrix();*/
+     stroke(0);
+    pushMatrix();
+    translate(this.pos.x, this.pos.y);
+    rotate( vel.heading()+(PI/2) );
+
+    // Thrusters
+    rectMode(CENTER);
+    colorMode(HSB);
+    fill(c);
+    rect(-size / 2, size * 2, size / 2, size);
+    rect(size / 2, size * 2, size / 2, size);
+
+    // Rocket body
+    fill(c);
+    beginShape(TRIANGLES);
+    vertex(0, -size * 2);
+    vertex(-size, size * 2);
+    vertex(size, size * 2);
+    endShape(CLOSE);
+
+    popMatrix();
+  }
+  void calcFitness(){
+    float d = dist(this.pos.x,this.pos.y,target.x,target.y);
+    float f = (1/d)*100;
+    if(completed){
+      f += lifespan/timer;
+      f *= 10;
+    }
+    if(f>fitness)
+    fitness = f;
+    if(crashed)
+    fitness/=7;
+  }
+
+}

@@ -1,0 +1,34 @@
+
+int r = 100;
+float rTo2;
+int maxVel = 4;
+int maxAcc = 2;
+
+int N = 50;
+ArrayList<chargedParticle> particles;
+
+void setup(){
+  fullScreen();
+  
+   rTo2 = r*r;
+  
+  particles = new ArrayList<chargedParticle>(N);
+  int i = 0;
+  while(i++<100)
+    particles.add(new chargedParticle());
+  
+  fill(255);
+  stroke(255,100);
+}
+
+void draw(){
+  background(0);
+  for(chargedParticle p : particles){
+    p.update();
+    for(chargedParticle o : particles){
+      if( p.dist2(o) < rTo2)
+        line(p.x,p.y,o.x,o.y);
+    }
+    p.display();
+  }
+}

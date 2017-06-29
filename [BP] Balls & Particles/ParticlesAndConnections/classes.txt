@@ -1,0 +1,47 @@
+
+class point{
+  float x,y;
+  point(){ x = random(width); y = random(height); }
+  
+  float dist2(point o){ return (x-o.x)*(x-o.x) + (y-o.y)*(y-o.y); }
+  float dist(point o){ return sqrt(dist2(o)); }
+}
+
+class particle extends point {
+  float vx, vy;
+  particle(){
+    super();
+    vx = random(maxVel);
+    vy = random(maxVel);
+  }
+  void update(){
+    x += vx;
+    y += vy;
+    if(x > width) x = 0;
+    if(x < 0) x = width;
+    if(y > height) y = 0;
+    if( y < 0) y = height;
+  }
+  void display(){
+    ellipse(x,y,5,5);
+  }
+}
+
+class chargedParticle extends particle {
+  float ax, ay;
+  chargedParticle(){
+    super();
+    ax = random(maxAcc);
+    ay = random(maxAcc);
+  }
+  void update(){
+    vx += ax;
+    vy += ay;
+    ax = ay = 0;
+    super.update();
+    vx = 0.99*vx;
+    vy = 0.99*vy;
+    
+    
+  }
+}
